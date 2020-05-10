@@ -3,6 +3,7 @@ package com.nosql.redissample;
 import com.google.gson.Gson;
 import com.nosql.redis.models.Person;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,8 @@ public class PersonController {
     }
 
     @GetMapping("/redis/person/{id}")
-    ResponseEntity findById(@PathVariable("id") String id) {
+    @Cacheable("persons")
+    public ResponseEntity findById(@PathVariable("id") String id) {
         log.info("action=findById, id=" + id);
         return ResponseEntity.ok(personRepository.findById(id));
     }
