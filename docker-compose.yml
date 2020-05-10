@@ -6,12 +6,13 @@ redis-sample:
 
 app-redis:
   container_name: spring-boot-redis
-  dockerfile: docker/Dockerfile
-  build: .
+  image: redis-sample:latest
   restart: always
   ports:
     - "8088:8080"
   links:
     - redis-sample
   environment:
-    - SPRING_PROFILES_ACTIVE=default
+    - SPRING_PROFILES_ACTIVE=docker
+  env_file:
+    - .env

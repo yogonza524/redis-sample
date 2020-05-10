@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 	id "io.freefair.lombok" version "5.0.0"
+	id 'com.google.cloud.tools.jib' version '2.2.0'
 }
 
 group = 'com.nosql'
@@ -27,4 +28,25 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+
+jib {
+	from{
+		image = 'openjdk:11.0.4-jdk-slim'
+	}
+	to {
+		image = 'redis-sample:latest'
+	}
+	container {
+		jvmFlags = ['-Xms512m', '-Xdebug', '-server',
+					'-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}'
+		]
+		environment = [
+				SPRING_PROFILES_ACTIVE : 'docker'
+		]
+		mainClass = 'com.nosql.redissample.RedisExampleApplication'
+		args = []
+		ports = ['8080/tcp']
+	}
 }

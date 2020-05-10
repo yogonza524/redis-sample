@@ -1,4 +1,4 @@
-package com.nosql.redissample;
+package com.nosql.redis.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash("Person")
+@RedisHash
 public class Person implements Serializable {
     @Id
     private String id;

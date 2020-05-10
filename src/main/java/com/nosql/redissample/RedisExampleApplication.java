@@ -3,9 +3,13 @@ package com.nosql.redissample;
 import com.google.common.io.Resources;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.nosql.redis.models.Person;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,8 +21,15 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@ComponentScan(
+		basePackages = {
+				"com.nosql"
+		}
+)
 @SpringBootApplication
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = {
+		"com.nosql.redis.models"
+})
 public class RedisExampleApplication {
 
 	public static void main(String[] args) {
@@ -28,7 +39,10 @@ public class RedisExampleApplication {
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 		RedisStandaloneConfiguration conf =
-				new RedisStandaloneConfiguration("localhost", 6371);
+				new RedisStandaloneConfiguration(
+						System.getenv("REDIS_HOST"),
+						Integer.valueOf(System.getenv("REDIS_PORT"))
+				);
 		return new JedisConnectionFactory(conf);
 	}
 

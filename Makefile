@@ -1,6 +1,6 @@
 run:
-	./gradlew assemble
-	docker-compose up -d --build --no-recreate 
+	./gradlew clean assemble jibDockerBuild
+	docker-compose up
 
 stop:
 	docker-compose stop
