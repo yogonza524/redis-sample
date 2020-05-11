@@ -3,7 +3,7 @@ package com.nosql.redissample;
 import com.google.gson.Gson;
 import com.nosql.redis.models.Person;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,12 +25,14 @@ public class PersonController {
     private final PersonService personService;
     private final Gson gson = new Gson();
     private final RedisTemplate<String, Object> redisTemplate;
+    private final CacheManager cacheManager;
 
-    public PersonController(List<Person> fake, PersonRepository personRepository, PersonService personService, RedisTemplate<String, Object> redisTemplate) {
+    public PersonController(List<Person> fake, PersonRepository personRepository, PersonService personService, RedisTemplate<String, Object> redisTemplate, CacheManager cacheManager) {
         this.fake = fake;
         this.personRepository = personRepository;
         this.personService = personService;
         this.redisTemplate = redisTemplate;
+        this.cacheManager = cacheManager;
     }
 
     @GetMapping("/redis/random")
@@ -50,9 +52,8 @@ public class PersonController {
 
     @DeleteMapping("/redis/person/{id}")
     public ResponseEntity deleteKeyById(@PathVariable("id") String id) {
-        System.out.println("Keys: " + redisTemplate.keys("*").size());
-        var r = redisTemplate.delete("persons::" + id);
 
-        return ResponseEntity.ok(Collections.singletonMap("deleted", r));
+        cacheManager.getCache("persons").evictIfPresent(id);
+        return ResponseEntity.ok(Collections.singletonMap("deleted", "Ok, I'll try"));
     }
 }
